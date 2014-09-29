@@ -9,6 +9,18 @@
     <xsl:element name="survey">
 
       <xsl:element name="data">
+
+        <xsl:element name="vargroup">
+          <xsl:attribute name="name">meta</xsl:attribute>
+          <xsl:for-each select="//metadata/meta">
+            <xsl:element name="var">
+              <xsl:attribute name="name"><xsl:value-of select="./@name" />
+              </xsl:attribute>
+              <xsl:value-of select="./@value" />
+            </xsl:element>
+          </xsl:for-each>
+        </xsl:element>
+
         <xsl:for-each select="//item">
           <xsl:element name="var">
             <xsl:attribute name="name"><xsl:value-of select="./@id" /></xsl:attribute>

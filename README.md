@@ -1,7 +1,10 @@
 socrates-schema
 ===============
 
-Survey schema tools for Socrates
+Introduction
+------------
+
+Survey schema tools for Socrates.
 
 The schema is defined in survey.xsd. To test your survey model against the
 schema, you might use xmllint like so:
@@ -9,23 +12,25 @@ schema, you might use xmllint like so:
     xmllint --schema survey.xsd --noout <your xml model>
 
 
-Socrates survey definition
-==========================
+The schema
+----------
 
-The new survey model uses the schema for i18n by Zope:
-
-    http://xml.zope.org/namespaces/i18n
-
-
-The survey consists of four parts:
+The survey consists of four (main) parts:
 
 1. data
 2. model
 3. layout
 4. submission
 
-Data
-====
+For i18n the new survey model uses the schema for i18n by Zope:
+
+    http://xml.zope.org/namespaces/i18n
+
+This allows the i18n:trans attribute on translatable items like label,
+hint, alert, etc.
+
+
+### Data
 
 The data part defines the variables (or: fields) that will hold the
 collected data. So, for instance, if you'd need to know someone's
@@ -56,10 +61,10 @@ A variable can also hold a default value:
       <var name="zipcode">9999..</a>
 
 
-Model
-=====
+### Model
 
 "It's only a model!"
+"Shhhh!"
 
 The model defines properties of the data, like whether a variable must
 have a value for the data to be valid, or specifying the type of the
@@ -75,7 +80,7 @@ variable. The following properties may be set:
 All properties except for the datatype can be specified in terms of an
 expression, like:
 
-    relevant="true"
+    relevant="true()"
     required="foo == 1"
 
 To apply properties to variables, 'binding' is used. This is done
@@ -94,8 +99,9 @@ or:
       <required>true</required>
     </properties>
 
-relevant
---------
+You can specify as many bind tags on a properties element as you like.
+
+#### relevant
 
 Specify whether the variable is relevant for the complete data. For
 example whenever someone filling in a survey says he has had no
@@ -103,44 +109,58 @@ education, a further question as to what type of school he/she went to
 is irrelevant. Defaults to 'true'.
 
 
-required
---------
+#### required
 
 Specify whether some variable is required for the data to be
 valid. Defaults to 'false'.
 
 
-readonly
---------
+#### readonly
 
 Specify whether some variable cannot be set. Defaults to 'false'.
 
 
-constraint
-----------
+#### constraint
 
 Constrain possible values of a variable, like 'smaller than' or 'in
 the range of ...'.
 
 
-calculate
----------
+#### calculate
 
 Calculate the value of a variable.
 
 
-datatype
---------
+#### datatype
 
 Specify the datatype of the variable. This places extra constraints on
 the variable, but may also affect display.
 
 
-Layout
-======
+### Layout
 
 The view part of the survey specifies what it 'looks like', although
-in theory the survey could also be converted to automated speech...
+in theory the survey could also be converted to automated
+speech...
+
+The layout section enables grouping for example into pages, or
+fieldsets. The grouping also enables you to say something about the
+layout of the group, using the layout attribute.
+
+So a group:
+
+    <group id="some group" layout="page">
+    ...
+    </group>
+
+will render all it's listed controls on a page, wheres a group like:
+
+    <group id="some group" layout="flow">
+        <property name="dir">h</property>
+    ...
+    </group>
+
+will render it's controls in a horizontal flow.
 
 
 Submission

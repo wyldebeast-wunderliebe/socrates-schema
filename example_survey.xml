@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<survey id="pipo"
+
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+
+  xsi:noNamespaceSchemaLocation="/home/dokter/Work/w20e/socrates/survey.xsd">
+
+  <data>
+    <vargroup name="xx">
+      <var name="bar" />
+      <var name="foo">1</var>
+      <vargroup name="yy">
+        <var name="pipo" />
+      </vargroup>
+    </vargroup>
+    <var name="zzz" />
+  </data>
+
+  <model>
+
+    <properties id="p0">
+      <bind>u_.*</bind>
+      <required>1</required>
+      <calculate></calculate>
+      <constraint></constraint>
+      <readonly></readonly>
+      <relevant>bar &gt; 666</relevant>
+      <datatype></datatype>
+    </properties>
+
+    <properties id="p1">
+      <bind>foo</bind>
+      <relevant>bar &gt; 666</relevant>
+    </properties>
+
+  </model>
+
+  <layout>
+
+    <optionset id="yesno">
+      <option value="1"><label i18n:trans="">yes</label></option>
+      <option value="0"><label i18n:trans="">no</label></option>
+    </optionset>
+
+    <group id="grp0" layout="page">
+      <label i18n:translate="">This is a group</label>
+      <hint></hint>
+
+      <text>Some text...</text>
+
+      <select bind="bar" id="pan">
+        <label i18n:translate="">Pick a number</label>
+        <option value="1"><label>1</label></option>
+        <option><label>2</label></option>
+        <option value="666"><label>666</label></option>
+      </select>
+
+      <select bind="bar" id="pan">
+        <label i18n:translate="">And another</label>
+        <optionset href="file:./options.xml" />
+      </select>
+
+      <select bind="bar" id="pan">
+        <label i18n:translate="">oh yeah?</label>
+        <optionset ref="yesno" />
+      </select>
+
+      <input id="reallyx" bind="bar">
+        <property name="widget">someother</property>
+        <label i18n:translate="really">Really?</label>
+        <hint></hint>
+        <help></help>
+      </input>
+
+      <control id="zzz" bind="bar">
+        <property name="widget">someother</property>
+        <label i18n:translate="really">Really?</label>
+      </control>
+
+    </group>
+
+  </layout>
+
+  <submission></submission>
+
+</survey>
