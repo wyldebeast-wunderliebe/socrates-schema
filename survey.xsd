@@ -1,0 +1,449 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Survey element, containing data, model, form and submission in
+       that order. We decided that order is important here, since the
+       focus shoud really be on data first, than model and lastely
+       layout (and submission).
+
+       Start with ensuring binds from layout controls always refer
+       to a variable in the data section.
+  -->
+  <xs:element name="survey" type="surveyType">
+    <xs:key name="var_name">
+      <xs:selector xpath=".//var"/>
+      <xs:field xpath="@name"/>
+    </xs:key>
+    <xs:keyref name="var_ref" refer="var_name">
+      <xs:selector xpath=".//input|.//select"/>
+      <xs:field xpath="@bind"/>
+    </xs:keyref>
+  </xs:element>
+
+  <xs:complexType name="surveyType">
+    <xs:sequence>
+      <xs:element ref="data" minOccurs="1" maxOccurs="1" />
+      <xs:element ref="model" minOccurs="1" maxOccurs="1" />
+      <xs:element ref="layout" minOccurs="1" maxOccurs="1" />
+      <xs:element ref="submission" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="id" type="xs:string" use="required" />
+  </xs:complexType>
+
+
+  <!-- Data container can contain var and vargroup elements. Variables must
+       be unique in the data container. This is defined using the 'key'
+       declaration on the survey element.
+    -->
+  <xs:element name="data" type="dataType">
+  </xs:element>
+
+  <xs:complexType name="dataType">
+    <xs:sequence>
+      <xs:group ref="variable" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:group name="variable">
+    <xs:choice>
+      <xs:element ref="vargroup"/>
+      <xs:element ref="var"/>
+    </xs:choice>
+  </xs:group>
+
+  <!-- Vargroup can be nested -->
+  <xs:element name="vargroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="variable" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- var element -->
+  <xs:element name="var">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- The model (Shhh!) -->
+  <xs:element name="model" type="modelType">
+    <xs:key name="properties_id">
+      <xs:selector xpath="./properties" />
+      <xs:field xpath="@id" />
+    </xs:key>
+  </xs:element>
+
+  <xs:complexType name="modelType">
+    <xs:sequence>
+      <xs:element ref="properties" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Model properties. The bind may use a regular expression, so
+  we can't do check on key ref... -->
+  <xs:element name="properties" type="propertiesType">
+  </xs:element>
+
+  <xs:complexType name="propertiesType">
+    <xs:all>
+      <xs:element name="bind" type="xs:string" minOccurs="1" />
+      <xs:element name="required" type="xs:string" minOccurs="0" />
+      <xs:element name="relevant" type="xs:string"  minOccurs="0" />
+      <xs:element name="readonly" type="xs:string"  minOccurs="0" />
+      <xs:element name="calculate" type="xs:string"  minOccurs="0" />
+      <xs:element name="constraint" type="xs:string"  minOccurs="0" />
+      <xs:element name="datatype" type="xs:string"  minOccurs="0" />
+    </xs:all>
+
+    <xs:attribute name="id" type="xs:string" use="required"/>
+  </xs:complexType>
+
+
+  <!-- form layout part -->
+  <xs:element name="layout" type="layoutType">
+    <xs:key name="control_id">
+      <xs:selector xpath="./*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <!-- allow for option set referencing -->
+    <xs:key name="set_id">
+      <xs:selector xpath="./optionset" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="set_id_ref" refer="set_id">
+      <xs:selector xpath=".//optionset"/>
+      <xs:field xpath="@ref"/>
+    </xs:keyref>
+
+  </xs:element>
+
+
+  <xs:complexType name="layoutType">
+    <xs:sequence>
+      <xs:element ref="optionset" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:group ref="renderable" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <!-- Anything that can be rendered -->
+  <xs:group name="renderable">
+    <xs:choice>
+      <xs:element ref="control" />
+      <xs:element ref="group" />
+      <xs:element ref="input" />
+      <xs:element ref="hidden" />
+      <xs:element ref="textarea" />
+      <xs:element ref="select" />
+      <xs:element ref="date" />
+      <xs:element ref="datetime" />
+      <xs:element ref="range" />
+      <xs:element ref="color" />
+      <xs:element ref="email" />
+      <xs:element ref="url" />
+      <xs:element ref="number" />
+      <xs:element ref="text" />
+      <xs:element ref="submit" />
+      <xs:element ref="cancel" />
+    </xs:choice>
+  </xs:group>
+
+
+  <!-- grouping -->
+  <xs:element name="group" type="groupType">
+    <xs:key name="group_control_id">
+      <xs:selector xpath="input" />
+      <xs:field xpath="@id" />
+    </xs:key>
+  </xs:element>
+
+  <xs:complexType name="groupType">
+    <xs:sequence>
+      <xs:element ref="property" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="label" minOccurs="0" maxOccurs="1" />
+      <xs:element ref="hint" minOccurs="0" maxOccurs="1" />
+      <xs:element ref="help" minOccurs="0" maxOccurs="1" />
+      <xs:group ref="renderable" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+
+    <xs:attribute name="id" type="xs:string" use="required" />
+    <xs:attribute name="layout" type="xs:string" use="required" />
+
+  </xs:complexType>
+
+
+  <!-- control properties for any renderable... -->
+  <xs:element name="property">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Base control -->
+  <xs:complexType name="controlType">
+    <xs:sequence>
+      <xs:element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="label" minOccurs="1" maxOccurs="1"/>
+      <xs:element ref="hint" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="help" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="alert" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="id" type="xs:string" use="required"/>
+    <xs:attribute name="bind" type="xs:string"/>
+  </xs:complexType>
+
+
+  <!-- label element -->
+  <xs:element name="label">
+    <xs:complexType>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:anyAttribute processContents="skip" />
+      </xs:extension>
+    </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- text element -->
+  <xs:element name="text">
+    <xs:complexType>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="id" type="xs:string" />
+      </xs:extension>
+    </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- hint element -->
+  <xs:element name="hint">
+    <xs:complexType>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:anyAttribute processContents="skip" />
+      </xs:extension>
+    </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- help element -->
+  <xs:element name="help">
+    <xs:complexType>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:anyAttribute processContents="skip" />
+      </xs:extension>
+    </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- alert element -->
+  <xs:element name="alert">
+    <xs:complexType>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:anyAttribute processContents="skip" />
+      </xs:extension>
+    </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Control, abstract definition for example external controls... -->
+  <xs:element name="control">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Input -->
+  <xs:element name="input">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- hidden -->
+  <xs:element name="hidden">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" />
+      <xs:attribute name="bind" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Textarea -->
+  <xs:element name="textarea">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Date -->
+  <xs:element name="date">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- DateTime -->
+  <xs:element name="datetime">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Range -->
+  <xs:element name="range">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Number -->
+  <xs:element name="number">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Color -->
+  <xs:element name="color">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Email -->
+  <xs:element name="email">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- URL -->
+  <xs:element name="url">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="submit">
+  </xs:element>
+
+
+  <xs:element name="cancel">
+  </xs:element>
+
+
+  <!-- Select element -->
+  <xs:element name="select">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+          <xs:choice>
+            <xs:element ref="option" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="optionset" />
+          </xs:choice>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- option element -->
+  <xs:element name="option" type="optionType" />
+
+  <xs:complexType name="optionType">
+    <xs:sequence>
+      <xs:element ref="label" minOccurs="1" maxOccurs="1" />
+      <xs:element ref="hint" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="value" type="xs:string" />
+  </xs:complexType>
+
+
+  <!-- option setelement -->
+  <xs:element name="optionset" type="optionsetType" />
+
+  <xs:complexType name="optionsetType">
+    <xs:sequence>
+      <xs:element ref="option" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string" />
+    <xs:attribute name="href" type="xs:string" />
+    <xs:attribute name="ref" type="xs:string" />
+  </xs:complexType>
+
+
+  <!-- Submission -->
+  <xs:element name="submission">
+    <xs:complexType>
+      <xs:all>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+
+</xs:schema>
