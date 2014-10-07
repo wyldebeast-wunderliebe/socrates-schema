@@ -163,7 +163,6 @@ will render all it's listed controls on a page, wheres a group like:
 will render it's controls in a horizontal flow.
 
 
-Submission
-==========
+### Submission
 
 Specify the way the survey data should be handled.

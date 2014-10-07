@@ -7,6 +7,7 @@
   
   <xsl:template match="questionnaire">
     <xsl:element name="survey">
+      <xsl:copy-of select="@id" />
 
       <xsl:element name="data">
 
@@ -74,6 +75,17 @@
 
       <xsl:element name="layout">
 
+        <xsl:for-each select="//*[@type='Matrix']">
+        
+          <xsl:element name="optionset">
+            <xsl:attribute name="id">optionset_<xsl:value-of select="@id" /></xsl:attribute>
+            <xsl:for-each select="./option">
+              <xsl:call-template name="option" />
+            </xsl:for-each>
+          </xsl:element>
+        </xsl:for-each>
+
+
         <xsl:for-each select="//section">
           <xsl:apply-templates select="itemgroup" />
         </xsl:for-each>
@@ -92,21 +104,35 @@
       <xsl:if test="@layout">
         <xsl:copy-of select="@layout" />
       </xsl:if>
-      <xsl:if test="not(@layout)">
+      <xsl:if test="@type='Matrix'">
+        <xsl:attribute name="layout">matrix</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="not(@layout) and not(@type)">
         <xsl:attribute name="layout">flow</xsl:attribute>
       </xsl:if>
+
+      <xsl:if test="@type='Matrix'">
+        
+        <xsl:element name="property">
+          <xsl:attribute name="name">optionset</xsl:attribute>optionset_<xsl:value-of select="@id" />
+        </xsl:element>
+      </xsl:if>
+
       <xsl:if test="@label != ''">
         <xsl:element name="label">
+          <xsl:attribute name="i18n:trans"></xsl:attribute>
           <xsl:value-of select="@label" />
         </xsl:element>
       </xsl:if>
       <xsl:if test="@hint != ''">
         <xsl:element name="hint">
+          <xsl:attribute name="i18n:trans"></xsl:attribute>
           <xsl:value-of select="@hint" />
         </xsl:element>
       </xsl:if>
       <xsl:apply-templates select="itemgroup" />
       <xsl:apply-templates select="item" />
+
     </xsl:element>
 
   </xsl:template>
@@ -118,19 +144,7 @@
           <xsl:call-template name="widget-attrs" />
           <xsl:call-template name="widget" />
           <xsl:for-each select="./option">
-            <xsl:element name="option">
-              <xsl:copy-of select="@value" />
-              <xsl:element name="label">
-                <xsl:attribute name="i18n:trans"></xsl:attribute>
-                <xsl:value-of select="./@label" />
-              </xsl:element>
-              <xsl:if test="./@hint != ''">
-                <xsl:element name="hint">
-                  <xsl:attribute name="i18n:trans"></xsl:attribute>
-                  <xsl:value-of select="./@hint" />
-                </xsl:element>
-              </xsl:if>
-            </xsl:element>
+            <xsl:call-template name="option" />
           </xsl:for-each>
         </xsl:element>
       </xsl:when>
@@ -159,9 +173,11 @@
           <xsl:call-template name="widget" />
         </xsl:element>
       </xsl:when>
-      <xsl:when test="./@type = 'Matrix'">
-      </xsl:when>
       <xsl:when test="./@type = 'MatrixItem'">
+        <xsl:element name="select">
+          <xsl:call-template name="widget-attrs" />
+          <xsl:call-template name="widget" />
+        </xsl:element>        
       </xsl:when>
       <xsl:when test="./@type = 'Output'">
         <xsl:element name="text">
@@ -187,6 +203,22 @@
     <xsl:attribute name="bind">
       <xsl:value-of select="./@id" />
     </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template name="option">
+    <xsl:element name="option">
+      <xsl:copy-of select="@value" />
+      <xsl:element name="label">
+        <xsl:attribute name="i18n:trans"></xsl:attribute>
+        <xsl:value-of select="./@label" />
+      </xsl:element>
+      <xsl:if test="./@hint != ''">
+        <xsl:element name="hint">
+          <xsl:attribute name="i18n:trans"></xsl:attribute>
+          <xsl:value-of select="./@hint" />
+        </xsl:element>
+      </xsl:if>
+    </xsl:element>
   </xsl:template>
 
   <xsl:template name="widget">
