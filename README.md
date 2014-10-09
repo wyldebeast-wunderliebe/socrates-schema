@@ -166,3 +166,31 @@ will render it's controls in a horizontal flow.
 ### Submission
 
 Specify the way the survey data should be handled.
+
+
+Internationalisation
+--------------------
+
+The survey model allows for internationalisation (i18n), or in other
+words, it supports translation information. All elements that are
+translatable should hold a _i18n:translate_ attribute. Elements that
+are translatable typically are question labels, hints, option labels,
+etc.
+
+The translation definition assumes an actual translation mechanism
+like _gettext_, which is based on message id's. The message id is the
+key for the translation into different languages.
+
+If the value of the _i18n:translate_ attribute is empty, the content
+of the element is taken as the message id:
+
+    <label i18n:translate="">What is your favourite color?</label>
+
+    => message id = 'What is your favourite color?'
+
+If the _i18n:translate_ attribute actually holds a value by itself,
+this is taken as the message id:
+
+    <label i18n:translate="fav_color">What is your favourite color?</label>
+
+    => message id = 'fav_color'
