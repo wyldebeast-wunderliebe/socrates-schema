@@ -101,6 +101,7 @@ or:
 
 You can specify as many bind tags on a properties element as you like.
 
+
 #### relevant
 
 Specify whether the variable is relevant for the complete data. For
@@ -143,9 +144,21 @@ The view part of the survey specifies what it 'looks like', although
 in theory the survey could also be converted to automated
 speech...
 
-The layout section enables grouping for example into pages, or
-fieldsets. The grouping also enables you to say something about the
-layout of the group, using the layout attribute.
+The layout specifies what kind of control is used to obtain data, so
+for instance a _select_ form element to present a list of values to
+the user for the question "What is your favourite color?".  A control
+is bound to the variable using the same _bind_ attribute as for
+properties. The semantics of
+
+    <select id="favcolor" bind="fav-colr">
+    ...
+    </select>
+
+is therefore: store the answer in the _fav-colr_ variable.
+
+The layout section enables grouping of control elements into pages, or
+fieldsets, etc. The grouping also enables you to say something about
+the layout of the group, using the layout attribute.
 
 So a group:
 
