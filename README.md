@@ -68,7 +68,8 @@ A variable can also hold a default value:
 
 The model defines properties of the data, like whether a variable must
 have a value for the data to be valid, or specifying the type of the
-variable. The following properties may be set:
+variable. The following properties may be set (in the order of the
+list below):
 
 * relevant
 * required
@@ -76,6 +77,8 @@ variable. The following properties may be set:
 * calculate
 * constraint
 * datatype
+
+N.B __order__ is important! 
 
 All properties except for the datatype can be specified in terms of an
 expression, like:
