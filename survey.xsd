@@ -95,15 +95,16 @@
   </xs:element>
 
   <xs:complexType name="propertiesType">
-    <xs:all>
-      <xs:element name="bind" type="xs:string" minOccurs="1" />
-      <xs:element name="required" type="xs:string" minOccurs="0" />
+    <xs:sequence>
+      <xs:element name="bind" type="xs:string" minOccurs="1"
+                  maxOccurs="unbounded" />
       <xs:element name="relevant" type="xs:string"  minOccurs="0" />
+      <xs:element name="required" type="xs:string" minOccurs="0" />
       <xs:element name="readonly" type="xs:string"  minOccurs="0" />
       <xs:element name="calculate" type="xs:string"  minOccurs="0" />
       <xs:element name="constraint" type="xs:string"  minOccurs="0" />
       <xs:element name="datatype" type="xs:string"  minOccurs="0" />
-    </xs:all>
+    </xs:sequence>
 
     <xs:attribute name="id" type="xs:string" use="required"/>
   </xs:complexType>
