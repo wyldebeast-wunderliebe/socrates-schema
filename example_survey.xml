@@ -19,13 +19,17 @@
 
   <model>
 
+    <properties id="sdcscsdc">
+      <bind>bzzz</bind>
+    </properties>
+
     <properties id="p0">
       <bind>u_.*</bind>
+      <relevant>bar &gt; 666</relevant>
       <required>1</required>
+      <readonly></readonly>
       <calculate></calculate>
       <constraint></constraint>
-      <readonly></readonly>
-      <relevant>bar &gt; 666</relevant>
       <datatype></datatype>
     </properties>
 
@@ -47,7 +51,8 @@
       <label i18n:translate="">This is a group</label>
       <hint></hint>
 
-      <text>Some text...</text>
+      <text>Some text... even with a <a href="#">tag</a> and some text
+      </text>
 
       <select bind="bar" id="pan">
         <label i18n:translate="">Pick a number</label>

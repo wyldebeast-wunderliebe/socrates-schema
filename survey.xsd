@@ -95,17 +95,19 @@
   </xs:element>
 
   <xs:complexType name="propertiesType">
+
     <xs:sequence>
       <xs:element name="bind" type="xs:string" minOccurs="1"
                   maxOccurs="unbounded" />
-      <xs:element name="relevant" type="xs:string"  minOccurs="0" />
+
+      <xs:element name="relevant" type="xs:string"  minOccurs="0" maxOccurs="1" />
       <xs:element name="required" type="xs:string" minOccurs="0" />
       <xs:element name="readonly" type="xs:string"  minOccurs="0" />
       <xs:element name="calculate" type="xs:string"  minOccurs="0" />
       <xs:element name="constraint" type="xs:string"  minOccurs="0" />
       <xs:element name="datatype" type="xs:string"  minOccurs="0" />
     </xs:sequence>
-
+    
     <xs:attribute name="id" type="xs:string" use="required"/>
   </xs:complexType>
 
@@ -144,6 +146,7 @@
       <xs:element ref="control" />
       <xs:element ref="group" />
       <xs:element ref="input" />
+      <xs:element ref="checkbox" />
       <xs:element ref="hidden" />
       <xs:element ref="textarea" />
       <xs:element ref="select" />
@@ -227,14 +230,11 @@
 
   <!-- text element -->
   <xs:element name="text">
-    <xs:complexType>
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="id" type="xs:string" />
-        <xs:anyAttribute processContents="skip"
-                         namespace="http://xml.zope.org/namespaces/i18n"/>
-      </xs:extension>
-    </xs:simpleContent>
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:any processContents="skip" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" />
     </xs:complexType>
   </xs:element>
 
@@ -319,6 +319,15 @@
     </xs:complexType>
   </xs:element>
 
+  <!-- Checkbox -->
+  <xs:element name="checkbox">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="controlType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
 
   <!-- Date -->
   <xs:element name="date">
