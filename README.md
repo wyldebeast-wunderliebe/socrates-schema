@@ -77,6 +77,7 @@ list below):
 * calculate
 * constraint
 * datatype
+* default
 
 N.B __order__ is important! 
 
@@ -139,6 +140,12 @@ Calculate the value of a variable.
 
 Specify the datatype of the variable. This places extra constraints on
 the variable, but may also affect display.
+
+
+#### default
+
+Specify a default value, using an expression. The default is
+calculated at the moment the variable is __accessed__ for the first time.
 
 
 ### Layout
